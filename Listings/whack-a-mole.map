@@ -1,0 +1,113 @@
+Component: ARM Compiler 5.06 update 6 (build 750) Tool: armlink [4d35ed]
+
+==============================================================================
+
+Section Cross References
+
+    whack-a-mole.o(RESET) refers to whack-a-mole.o(MYCODE) for Reset_Handler
+
+
+==============================================================================
+
+Image Symbol Table
+
+    Local Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    Whack-a-mole.s                           0x00000000   Number         0  whack-a-mole.o ABSOLUTE
+    RESET                                    0x08000000   Section        8  whack-a-mole.o(RESET)
+    MYCODE                                   0x08000008   Section      720  whack-a-mole.o(MYCODE)
+    Normal_game_play                         0x08000039   Thumb Code    16  whack-a-mole.o(MYCODE)
+    Start_Game                               0x08000049   Thumb Code    56  whack-a-mole.o(MYCODE)
+    ReactTime_wait                           0x08000081   Thumb Code    90  whack-a-mole.o(MYCODE)
+    finish_round                             0x080000db   Thumb Code    20  whack-a-mole.o(MYCODE)
+    End_Failure                              0x080000ef   Thumb Code    20  whack-a-mole.o(MYCODE)
+    End_Success                              0x08000103   Thumb Code    16  whack-a-mole.o(MYCODE)
+    losing_Wait                              0x08000113   Thumb Code    16  whack-a-mole.o(MYCODE)
+    Winning_Wait                             0x0800012f   Thumb Code    16  whack-a-mole.o(MYCODE)
+    PrelimWait_time                          0x08000189   Thumb Code    16  whack-a-mole.o(MYCODE)
+    Wait_for_player                          0x080001a5   Thumb Code    34  whack-a-mole.o(MYCODE)
+    check_start                              0x080001c7   Thumb Code    62  whack-a-mole.o(MYCODE)
+    LED1                                     0x08000205   Thumb Code    20  whack-a-mole.o(MYCODE)
+    LED2                                     0x08000219   Thumb Code    20  whack-a-mole.o(MYCODE)
+    LED3                                     0x0800022d   Thumb Code    20  whack-a-mole.o(MYCODE)
+    LED4                                     0x08000241   Thumb Code    20  whack-a-mole.o(MYCODE)
+    delay                                    0x08000255   Thumb Code    16  whack-a-mole.o(MYCODE)
+    all_dark                                 0x0800026d   Thumb Code    16  whack-a-mole.o(MYCODE)
+    GPIO_ClockInit                           0x0800027d   Thumb Code    36  whack-a-mole.o(MYCODE)
+    GPIO_init                                0x080002a1   Thumb Code    12  whack-a-mole.o(MYCODE)
+
+    Global Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    BuildAttributes$$THM_ISAv4$P$D$K$B$S$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$EBA8$STANDARDLIB$PRES8$EABIv2 0x00000000   Number         0  anon$$obj.o ABSOLUTE
+    __Vectors                                0x08000000   Data           4  whack-a-mole.o(RESET)
+    Reset_Handler                            0x08000009   Thumb Code    48  whack-a-mole.o(MYCODE)
+
+
+
+==============================================================================
+
+Memory Map of the image
+
+  Image Entry point : 0x08000009
+
+  Load Region LR_1 (Base: 0x08000000, Size: 0x000002d8, Max: 0xffffffff, ABSOLUTE)
+
+    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000002d8, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x08000000   0x08000000   0x00000008   Data   RO            1    RESET               whack-a-mole.o
+    0x08000008   0x08000008   0x000002d0   Code   RO            2  * MYCODE              whack-a-mole.o
+
+
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x080002d8, Size: 0x00000000, Max: 0xffffffff, ABSOLUTE)
+
+    **** No section assigned to this execution region ****
+
+
+    Execution Region ER_ZI (Exec base: 0x20000000, Load base: 0x080002d8, Size: 0x00000000, Max: 0xffffffff, ABSOLUTE)
+
+    **** No section assigned to this execution region ****
+
+
+==============================================================================
+
+Image component sizes
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
+
+       720         44          8          0          0       1284   whack-a-mole.o
+
+    ----------------------------------------------------------------------
+       720         44          8          0          0       1284   Object Totals
+         0          0          0          0          0          0   (incl. Generated)
+         0          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+         0          0          0          0          0          0   Library Totals
+         0          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+==============================================================================
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
+
+       720         44          8          0          0       1284   Grand Totals
+       720         44          8          0          0       1284   ELF Image Totals
+       720         44          8          0          0          0   ROM Totals
+
+==============================================================================
+
+    Total RO  Size (Code + RO Data)                  728 (   0.71kB)
+    Total RW  Size (RW Data + ZI Data)                 0 (   0.00kB)
+    Total ROM Size (Code + RO Data + RW Data)        728 (   0.71kB)
+
+==============================================================================
+

@@ -1,0 +1,1339 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; GPIO Test program - Dave Duguid, 2011 
+    2 00000000         ; Modified Trevor Douglas 2014 
+    3 00000000         
+    4 00000000         ;;; Directives 
+    5 00000000                 PRESERVE8
+    6 00000000                 THUMB
+    7 00000000         
+    8 00000000         
+    9 00000000         ;;; Equates 
+   10 00000000         
+   11 00000000 20001000 
+                       INITIAL_MSP
+                               EQU              0x20001000  ; Initial Main Stac
+                                                            k Pointer Value 
+   12 00000000         
+   13 00000000         
+   14 00000000         ;PORT A GPIO - Base Addr: 0x40010800 
+   15 00000000 40010800 
+                       GPIOA_CRL
+                               EQU              0x40010800  ; (0x00) Port Confi
+                                                            guration Register f
+                                                            or Px7 -> Px0 
+   16 00000000 40010804 
+                       GPIOA_CRH
+                               EQU              0x40010804  ; (0x04) Port Confi
+                                                            guration Register f
+                                                            or Px15 -> Px8 
+   17 00000000 40010808 
+                       GPIOA_IDR
+                               EQU              0x40010808  ; (0x08) Port Input
+                                                             Data Register 
+   18 00000000 4001080C 
+                       GPIOA_ODR
+                               EQU              0x4001080C  ; (0x0C) Port Outpu
+                                                            t Data Register 
+   19 00000000 40010810 
+                       GPIOA_BSRR
+                               EQU              0x40010810  ; (0x10) Port Bit S
+                                                            et/Reset Register 
+   20 00000000 40010814 
+                       GPIOA_BRR
+                               EQU              0x40010814  ; (0x14) Port Bit R
+                                                            eset Register 
+   21 00000000 40010818 
+                       GPIOA_LCKR
+                               EQU              0x40010818  ; (0x18) Port Confi
+                                                            guration Lock Regis
+                                                            ter 
+   22 00000000         
+   23 00000000         ;PORT B GPIO - Base Addr: 0x40010C00 
+   24 00000000 40010C00 
+                       GPIOB_CRL
+                               EQU              0x40010C00  ; (0x00) Port Confi
+                                                            guration Register f
+                                                            or Px7 -> Px0 
+   25 00000000 40010C04 
+                       GPIOB_CRH
+                               EQU              0x40010C04  ; (0x04) Port Confi
+                                                            guration Register f
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                                                            or Px15 -> Px8 
+   26 00000000 40010C08 
+                       GPIOB_IDR
+                               EQU              0x40010C08  ; (0x08) Port Input
+                                                             Data Register 
+   27 00000000 40010C0C 
+                       GPIOB_ODR
+                               EQU              0x40010C0C  ; (0x0C) Port Outpu
+                                                            t Data Register 
+   28 00000000 40010C10 
+                       GPIOB_BSRR
+                               EQU              0x40010C10  ; (0x10) Port Bit S
+                                                            et/Reset Register 
+   29 00000000 40010C14 
+                       GPIOB_BRR
+                               EQU              0x40010C14  ; (0x14) Port Bit R
+                                                            eset Register 
+   30 00000000 40010C18 
+                       GPIOB_LCKR
+                               EQU              0x40010C18  ; (0x18) Port Confi
+                                                            guration Lock Regis
+                                                            ter 
+   31 00000000         
+   32 00000000         ;The onboard LEDS are on port C bits 8 and 9 
+   33 00000000         ;PORT C GPIO - Base Addr: 0x40011000 
+   34 00000000 40011000 
+                       GPIOC_CRL
+                               EQU              0x40011000  ; (0x00) Port Confi
+                                                            guration Register f
+                                                            or Px7 -> Px0 
+   35 00000000 40011004 
+                       GPIOC_CRH
+                               EQU              0x40011004  ; (0x04) Port Confi
+                                                            guration Register f
+                                                            or Px15 -> Px8 
+   36 00000000 40011008 
+                       GPIOC_IDR
+                               EQU              0x40011008  ; (0x08) Port Input
+                                                             Data Register 
+   37 00000000 4001100C 
+                       GPIOC_ODR
+                               EQU              0x4001100C  ; (0x0C) Port Outpu
+                                                            t Data Register 
+   38 00000000 40011010 
+                       GPIOC_BSRR
+                               EQU              0x40011010  ; (0x10) Port Bit S
+                                                            et/Reset Register 
+   39 00000000 40011014 
+                       GPIOC_BRR
+                               EQU              0x40011014  ; (0x14) Port Bit R
+                                                            eset Register 
+   40 00000000 40011018 
+                       GPIOC_LCKR
+                               EQU              0x40011018  ; (0x18) Port Confi
+                                                            guration Lock Regis
+                                                            ter 
+   41 00000000         
+   42 00000000         ;Registers for configuring and enabling the clocks 
+   43 00000000         ;RCC Registers - Base Addr: 0x40021000 
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   44 00000000 40021000 
+                       RCC_CR  EQU              0x40021000  ; Clock Control Reg
+                                                            ister 
+   45 00000000 40021004 
+                       RCC_CFGR
+                               EQU              0x40021004  ; Clock Configurati
+                                                            on Register 
+   46 00000000 40021008 
+                       RCC_CIR EQU              0x40021008  ; Clock Interrupt R
+                                                            egister 
+   47 00000000 4002100C 
+                       RCC_APB2RSTR
+                               EQU              0x4002100C  ; APB2 Peripheral R
+                                                            eset Register 
+   48 00000000 40021010 
+                       RCC_APB1RSTR
+                               EQU              0x40021010  ; APB1 Peripheral R
+                                                            eset Register 
+   49 00000000 40021014 
+                       RCC_AHBENR
+                               EQU              0x40021014  ; AHB Peripheral Cl
+                                                            ock Enable Register
+                                                             
+   50 00000000         
+   51 00000000 40021018 
+                       RCC_APB2ENR
+                               EQU              0x40021018  ; APB2 Peripheral C
+                                                            lock Enable Registe
+                                                            r  -- Used 
+   52 00000000         
+   53 00000000 4002101C 
+                       RCC_APB1ENR
+                               EQU              0x4002101C  ; APB1 Peripheral C
+                                                            lock Enable Registe
+                                                            r 
+   54 00000000 40021020 
+                       RCC_BDCR
+                               EQU              0x40021020  ; Backup Domain Con
+                                                            trol Register 
+   55 00000000 40021024 
+                       RCC_CSR EQU              0x40021024  ; Control/Status Re
+                                                            gister 
+   56 00000000 4002102C 
+                       RCC_CFGR2
+                               EQU              0x4002102C  ; Clock Configurati
+                                                            on Register 2 
+   57 00000000         
+   58 00000000         ; Times for delay routines 
+   59 00000000         
+   60 00000000 00186A00 
+                       DELAYTIME
+                               EQU              1600000     ; (200 ms/24MHz PLL
+                                                            ) 
+   61 00000000 000F4240 
+                       DELAYONEHZ
+                               EQU              1000000     ; 1hz
+   62 00000000 00186A00 
+                       PrelimWait
+                               EQU              1600000
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+   63 00000000 AB98D379 
+                       Rand    EQU              0xAB98D379
+   64 00000000 00057E40 
+                       ReactTime
+                               EQU              360000
+   65 00000000 00057E40 
+                       WinningSignalTime
+                               EQU              360000
+   66 00000000 00057E40 
+                       LosingSignalTime
+                               EQU              360000
+   67 00000000         ; Vector Table Mapped to Address 0 at Reset 
+   68 00000000                 AREA             RESET, Data, READONLY
+   69 00000000                 EXPORT           __Vectors
+   70 00000000         
+   71 00000000 20001000 
+                       __Vectors
+                               DCD              INITIAL_MSP ; stack pointer val
+                                                            ue when stack is em
+                                                            pty 
+   72 00000004 00000000        DCD              Reset_Handler ; reset vector 
+   73 00000008         
+   74 00000008                 AREA             MYCODE, CODE, READONLY
+   75 00000000                 EXPORT           Reset_Handler
+   76 00000000                 ENTRY
+   77 00000000         
+   78 00000000         Reset_Handler
+                               PROC
+   79 00000000         
+   80 00000000 F7FF FFFE       BL               GPIO_ClockInit
+   81 00000004 F7FF FFFE       BL               GPIO_init
+   82 00000008         
+   83 00000008         mainLoop
+   84 00000008         
+   85 00000008 F7FF FFFE       BL               all_dark
+   86 0000000C         
+   87 0000000C F7FF FFFE       BL               delay
+   88 00000010 F10B 0B01       add              r11, r11, #1
+   89 00000014         
+   90 00000014 F7FF FFFE       BL               Wait_for_player
+   91 00000018         
+   92 00000018 F7FF FFFE       BL               check_start
+   93 0000001C 2801            cmp              r0, #1
+   94 0000001E D0FE            BEQ              Normal_game_play
+   95 00000020         
+   96 00000020 F7FF FFFE       BL               delay
+   97 00000024 F1BB 0F04       cmp              r11, #4
+   98 00000028 BFA8 F04F 
+              0B00             MOVGE            r11, #0
+   99 0000002E E7EB            B                mainLoop
+  100 00000030                 ENDP
+  101 00000030         
+  102 00000030         
+  103 00000030         
+  104 00000030         
+  105 00000030         ;;;;;;;;Subroutines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                       ;; 
+  106 00000030         Normal_game_play
+                               PROC
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  107 00000030         
+  108 00000030 F7FF FFFE       BL               PrelimWait_time
+  109 00000034         
+  110 00000034 F8DF 926C       ldr              r9,=Rand
+  111 00000038 F8DF A26C       ldr              r10,=ReactTime
+  112 0000003C E7FE            B                Start_Game
+  113 0000003E 4770            BX               LR
+  114 00000040                 ENDP
+  115 00000040         Start_Game
+                               PROC
+  116 00000040 EBAA 0A05       sub              r10, r10, r5
+  117 00000044 F009 0103       and              r1, r9, #0x0003
+  118 00000048 F7FF FFFE       BL               all_dark
+  119 0000004C F7FF FFFE       BL               PrelimWait_time
+  120 00000050 2900            cmp              r1, #0
+  121 00000052 BF08 F7FF 
+              FFFE             BLEQ             LED1
+  122 00000058 2901            cmp              r1, #1
+  123 0000005A BF08 F7FF 
+              FFFE             BLEQ             LED2
+  124 00000060 2902            cmp              r1, #2
+  125 00000062 BF08 F7FF 
+              FFFE             BLEQ             LED3
+  126 00000068 2903            cmp              r1, #3
+  127 0000006A BF08 F7FF 
+              FFFE             BLEQ             LED4
+  128 00000070 EA4F 0959       mov              r9, r9, LSR #1
+  129 00000074 E7FE            B                ReactTime_wait
+  130 00000076         
+  131 00000076         ;B Start_Game
+  132 00000076         
+  133 00000076 4770            BX               LR
+  134 00000078                 ENDP
+  135 00000078         
+  136 00000078         ReactTime_wait
+                               PROC
+  137 00000078         
+  138 00000078 F04F 0005       MOV              r0, #5
+  139 0000007C         ;sw4 PC 12
+  140 0000007C B442            PUSH             {r1, r6}
+  141 0000007E 4E8B            ldr              r6,=GPIOC_IDR
+  142 00000080 6831            ldr              r1, [r6]
+  143 00000082 F401 5180       and              r1, #0x1000
+  144 00000086 2900            cmp              r1, #00
+  145 00000088 BF08 2002       MOVEQ            r0, #2
+  146 0000008C         
+  147 0000008C 4E88            ldr              r6,=GPIOA_IDR
+  148 0000008E 6831            ldr              r1, [r6]
+  149 00000090 F001 0120       and              r1, #0x0020
+  150 00000094 2900            cmp              r1, #0
+  151 00000096 BF08 2003       MOVEQ            r0, #3
+  152 0000009A         
+  153 0000009A 4E86            ldr              r6,=GPIOB_IDR
+  154 0000009C 6831            ldr              r1, [r6]
+  155 0000009E F401 7100       and              r1, #0x0200
+  156 000000A2 2900            cmp              r1, #0
+  157 000000A4 BF08 2001       MOVEQ            r0, #1
+  158 000000A8         
+  159 000000A8 4E82            ldr              r6,=GPIOB_IDR
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  160 000000AA 6831            ldr              r1, [r6]
+  161 000000AC F401 7180       and              r1, #0x0100
+  162 000000B0 2900            cmp              r1, #0
+  163 000000B2 BF08 2000       MOVEQ            r0, #0
+  164 000000B6         
+  165 000000B6 BC42            POP              {r1, r6}
+  166 000000B8 4281            cmp              r1, r0
+  167 000000BA D0FE            BEQ              finish_round
+  168 000000BC         ;BL PrelimWait_time
+  169 000000BC 2804            cmp              r0, #4
+  170 000000BE BFD8 F04F 
+              0A01             MOVLE            r10, #1
+  171 000000C4 F1BA 0A01       subs             r10, #1
+  172 000000C8 F1BA 0F00       cmp              r10, #0
+  173 000000CC D1FE            bne              ReactTime_wait
+  174 000000CE E7FE            B                End_Failure
+  175 000000D0 4770            BX               LR
+  176 000000D2                 ENDP
+  177 000000D2         
+  178 000000D2         finish_round
+                               PROC
+  179 000000D2 F8DF A1D4       ldr              r10,=ReactTime
+  180 000000D6 F104 0401       add              r4, r4, #1
+  181 000000DA 2C10            cmp              r4, #16
+  182 000000DC D0FE            BEQ              End_Success
+  183 000000DE F105 050C       add              r5, r5, #12
+  184 000000E2 E7FE            B                Start_Game
+  185 000000E4 4770            BX               LR
+  186 000000E6                 ENDP
+  187 000000E6         End_Failure
+                               PROC
+  188 000000E6 F8DF A1C0       ldr              r10,=ReactTime
+  189 000000EA F7FF FFFE       BL               LED3
+  190 000000EE F7FF FFFE       BL               LED4
+  191 000000F2 F7FF FFFE       BL               losing_Wait
+  192 000000F6 E7FE            B                Wait_for_player
+  193 000000F8 4770            BX               LR
+  194 000000FA                 ENDP
+  195 000000FA         End_Success
+                               PROC
+  196 000000FA F7FF FFFE       BL               LED1
+  197 000000FE F7FF FFFE       BL               LED2
+  198 00000102 F7FF FFFE       BL               Winning_Wait
+  199 00000106 E7FE            B                Wait_for_player
+  200 00000108 4770            BX               LR
+  201 0000010A                 ENDP
+  202 0000010A         
+  203 0000010A         losing_Wait
+                               PROC
+  204 0000010A F84D AD04       push{r10}
+  205 0000010E F8DF A198       ldr              r10,=LosingSignalTime
+  206 00000112 E002            b                waitl
+  207 00000114 F85D AB04       pop{r10}
+  208 00000118 4770            BX               LR
+  209 0000011A                 ENDP
+  210 0000011A         waitl
+  211 0000011A F1BA 0A01       subs             r10, #1
+  212 0000011E D1FC            bne              waitl
+  213 00000120 F85D AB04       pop{r10}
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  214 00000124 4770            BX               LR
+  215 00000126         
+  216 00000126         Winning_Wait
+                               PROC
+  217 00000126 F84D AD04       push{r10}
+  218 0000012A F8DF A17C       ldr              r10,=WinningSignalTime
+  219 0000012E E002            b                waitw
+  220 00000130 F85D AB04       pop{r10}
+  221 00000134 4770            BX               LR
+  222 00000136                 ENDP
+  223 00000136         waitw
+  224 00000136 F1BA 0A01       subs             r10, #1
+  225 0000013A D1FC            bne              waitw
+  226 0000013C F85D AB04       pop{r10}
+  227 00000140 4770            BX               LR
+  228 00000142         check_button
+                               PROC
+  229 00000142         ;sw4 PC 12
+  230 00000142 B442            PUSH             {r1, r6}
+  231 00000144 4E59            ldr              r6,=GPIOC_IDR
+  232 00000146 6831            ldr              r1, [r6]
+  233 00000148 F401 5180       and              r1, #0x1000
+  234 0000014C 2900            cmp              r1, #00
+  235 0000014E BF08 2002       MOVEQ            r0, #2
+  236 00000152         
+  237 00000152 4E57            ldr              r6,=GPIOA_IDR
+  238 00000154 6831            ldr              r1, [r6]
+  239 00000156 F001 0120       and              r1, #0x0020
+  240 0000015A 2900            cmp              r1, #0
+  241 0000015C BF08 2003       MOVEQ            r0, #3
+  242 00000160         
+  243 00000160 4E54            ldr              r6,=GPIOB_IDR
+  244 00000162 6831            ldr              r1, [r6]
+  245 00000164 F401 7100       and              r1, #0x0200
+  246 00000168 2900            cmp              r1, #0
+  247 0000016A BF08 2001       MOVEQ            r0, #1
+  248 0000016E         
+  249 0000016E 4E51            ldr              r6,=GPIOB_IDR
+  250 00000170 6831            ldr              r1, [r6]
+  251 00000172 F401 7180       and              r1, #0x0100
+  252 00000176 2900            cmp              r1, #0
+  253 00000178 BF08 2000       MOVEQ            r0, #0
+  254 0000017C         
+  255 0000017C BC42            POP              {r1, r6}
+  256 0000017E 4770            BX               LR
+  257 00000180                 ENDP
+  258 00000180         PrelimWait_time
+                               PROC
+  259 00000180 F84D AD04       push{r10}
+  260 00000184 F8DF A130       ldr              r10,=PrelimWait
+  261 00000188 E002            b                wait1
+  262 0000018A F85D AB04       pop{r10}
+  263 0000018E 4770            BX               LR
+  264 00000190                 ENDP
+  265 00000190         wait1
+  266 00000190 F1BA 0A01       subs             r10, #1
+  267 00000194 D1FC            bne              wait1
+  268 00000196 F85D AB04       pop{r10}
+  269 0000019A 4770            BX               LR
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  270 0000019C         Wait_for_player
+                               PROC
+  271 0000019C         ;1hz = 1 cycle/second
+  272 0000019C E92D 4800       PUSH             {r11 ,lr}
+  273 000001A0         
+  274 000001A0 F1BB 0F01       cmp              r11, #1
+  275 000001A4 D0FE            BEQ              LED4
+  276 000001A6 F1BB 0F02       cmp              r11, #2
+  277 000001AA D0FE            BEQ              LED3
+  278 000001AC F1BB 0F03       cmp              r11, #3
+  279 000001B0 D0FE            BEQ              LED2
+  280 000001B2 F1BB 0F04       cmp              r11, #4
+  281 000001B6 D0FE            BEQ              LED1
+  282 000001B8         
+  283 000001B8 E8BD 8800       POP              {r11, pc}
+  284 000001BC         
+  285 000001BC 4770            BX               LR
+  286 000001BE                 ENDP
+  287 000001BE         
+  288 000001BE         
+  289 000001BE         check_start
+                               PROC
+  290 000001BE         ;sw4 PC 12
+  291 000001BE B442            PUSH             {r1, r6}
+  292 000001C0 4E3A            ldr              r6,=GPIOC_IDR
+  293 000001C2 6831            ldr              r1, [r6]
+  294 000001C4 F401 5180       and              r1, #0x1000
+  295 000001C8 2900            cmp              r1, #00
+  296 000001CA BF08 2001       MOVEQ            r0, #1
+  297 000001CE         
+  298 000001CE 4E38            ldr              r6,=GPIOA_IDR
+  299 000001D0 6831            ldr              r1, [r6]
+  300 000001D2 F001 0120       and              r1, #0x0020
+  301 000001D6 2900            cmp              r1, #0
+  302 000001D8 BF08 2001       MOVEQ            r0, #1
+  303 000001DC         
+  304 000001DC 4E35            ldr              r6,=GPIOB_IDR
+  305 000001DE 6831            ldr              r1, [r6]
+  306 000001E0 F401 7100       and              r1, #0x0200
+  307 000001E4 2900            cmp              r1, #0
+  308 000001E6 BF08 2001       MOVEQ            r0, #1
+  309 000001EA         
+  310 000001EA 4E32            ldr              r6,=GPIOB_IDR
+  311 000001EC 6831            ldr              r1, [r6]
+  312 000001EE F401 7180       and              r1, #0x0100
+  313 000001F2 2900            cmp              r1, #0
+  314 000001F4 BF08 2001       MOVEQ            r0, #1
+  315 000001F8         
+  316 000001F8 BC42            POP              {r1, r6}
+  317 000001FA 4770            BX               LR
+  318 000001FC                 ENDP
+  319 000001FC         
+  320 000001FC         LED1    PROC
+  321 000001FC         ;led 1 pa 9
+  322 000001FC B413            PUSH             {r0, r1, r4}
+  323 000001FE 482F            ldr              r0,=GPIOA_ODR
+  324 00000200 6801            ldr              r1,[r0]
+  325 00000202 F64F 54FF       mov              r4,#0xfdff  ; set PA 9 to 0, li
+                                                            ght up led
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  326 00000206 EA01 0104       and              r1,r1,r4
+  327 0000020A 6001            str              r1,[r0]
+  328 0000020C BC13            POP              {r0, r1, r4}
+  329 0000020E 4770            BX               LR
+  330 00000210                 ENDP
+  331 00000210         
+  332 00000210         LED2    PROC
+  333 00000210         ; led 2 pa 10
+  334 00000210 B413            PUSH             {r0, r1, r4}
+  335 00000212 482A            ldr              r0,=GPIOA_ODR
+  336 00000214 6801            ldr              r1,[r0]
+  337 00000216 F64F 34FF       mov              r4,#0xfbff  ; set PA 10 to 0, l
+                                                            ight up led
+  338 0000021A EA01 0104       and              r1,r1,r4
+  339 0000021E 6001            str              r1,[r0]
+  340 00000220 BC13            POP              {r0, r1, r4}
+  341 00000222 4770            BX               LR
+  342 00000224                 ENDP
+  343 00000224         
+  344 00000224         
+  345 00000224         LED3    PROC
+  346 00000224         ;led 3 pa 11
+  347 00000224         ;PUSH {lr}
+  348 00000224 B413            PUSH             {r0, r1, r4}
+  349 00000226 4825            ldr              r0,=GPIOA_ODR
+  350 00000228 6801            ldr              r1,[r0]
+  351 0000022A F24F 74FF       mov              r4,#0xf7ff  ; set PA 11 to 0, l
+                                                            ight up led f7ff
+  352 0000022E EA01 0104       and              r1,r1,r4
+  353 00000232 6001            str              r1,[r0]
+  354 00000234 BC13            POP              {r0, r1, r4}
+  355 00000236 4770            BX               LR
+  356 00000238                 ENDP
+  357 00000238         
+  358 00000238         
+  359 00000238         LED4    PROC
+  360 00000238         ;led 4 pa 12
+  361 00000238 B413            PUSH             {r0, r1, r4}
+  362 0000023A 4820            ldr              r0,=GPIOA_ODR
+  363 0000023C 6801            ldr              r1,[r0]
+  364 0000023E F64E 74FF       mov              r4,#0xefff  ; set PA 12 to 0, l
+                                                            ight up led
+  365 00000242 EA01 0104       and              r1,r1,r4
+  366 00000246 6001            str              r1,[r0]
+  367 00000248 BC13            POP              {r0, r1, r4}
+  368 0000024A 4770            BX               LR
+  369 0000024C                 ENDP
+  370 0000024C         
+  371 0000024C         
+  372 0000024C         delay   PROC
+  373 0000024C F84D AD04       push{r10}
+  374 00000250 F8DF A06C       ldr              r10,=DELAYONEHZ
+  375 00000254 E002            b                wait
+  376 00000256 F85D AB04       pop{r10}
+  377 0000025A 4770            BX               LR
+  378 0000025C                 ENDP
+  379 0000025C         wait
+  380 0000025C F1BA 0A01       subs             r10, #1
+  381 00000260 D1FC            bne              wait
+
+
+
+ARM Macro Assembler    Page 10 
+
+
+  382 00000262 4770            BX               LR
+  383 00000264         
+  384 00000264         all_dark
+                               PROC
+  385 00000264 B403            PUSH             {r0, r1}
+  386 00000266 4815            ldr              r0,=GPIOA_ODR
+  387 00000268 6801            ldr              r1,[r0]
+  388 0000026A F441 51F0       orr              r1,r1,#0x00001e00
+  389 0000026E 6001            str              r1,[r0]
+  390 00000270 BC03            POP              {r0, r1}
+  391 00000272 4770            BX               LR
+  392 00000274                 ENDP
+  393 00000274         
+  394 00000274         ;This routine will enable the clock for the Ports that y
+                       ou need  
+  395 00000274                 ALIGN
+  396 00000274         GPIO_ClockInit
+                               PROC
+  397 00000274         
+  398 00000274         ; Students to write.  Registers   .. RCC_APB2ENR 
+  399 00000274         ; ENEL 384 Pushbuttons: SW2(Red): PB8, SW3(Black): PB9, 
+                       SW4(Blue): PC12 *****NEW for 2015**** SW5(Green): PA5 
+  400 00000274         ; ENEL 384 board LEDs: D1 - PA9, D2 - PA10, D3 - PA11, D
+                       4 - PA12 
+  401 00000274 B413            PUSH             {r0, r1, r4}
+  402 00000276 4813            ldr              r0,=RCC_APB2ENR
+  403 00000278 6801            ldr              r1,[r0]
+  404 0000027A F04F 0404       ldr              r4,=0x04
+  405 0000027E EA41 0104       orr              r1,r1,r4
+  406 00000282 F04F 0408       ldr              r4,=0x08
+  407 00000286 EA41 0104       orr              r1,r1,r4
+  408 0000028A F04F 0410       ldr              r4,=0x10
+  409 0000028E EA41 0104       orr              r1,r1,r4
+  410 00000292 6001            str              r1,[r0]
+  411 00000294 BC13            POP              {r0, r1, r4}
+  412 00000296 4770            BX               LR
+  413 00000298                 ENDP
+  414 00000298         
+  415 00000298         
+  416 00000298         
+  417 00000298         ;This routine enables the GPIO for the LED's.  By defaul
+                       t the I/O lines are input so we only need to configure f
+                       or ouptut. 
+  418 00000298                 ALIGN
+  419 00000298         GPIO_init
+                               PROC
+  420 00000298 B403            PUSH             {r0, r1}
+  421 0000029A         ; ENEL 384 board LEDs: D1 - PA9, D2 - PA10, D3 - PA11, D
+                       4 - PA12 
+  422 0000029A 480B            LDR              R0, =GPIOA_CRH
+  423 0000029C 490B            ldr              r1,=0x44433334
+  424 0000029E 6001            str              r1,[r0]
+  425 000002A0 BC03            POP              {r0, r1}
+  426 000002A2 4770            BX               LR
+  427 000002A4                 ENDP
+  428 000002A4         
+  429 000002A4         
+  430 000002A4         
+  431 000002A4         
+
+
+
+ARM Macro Assembler    Page 11 
+
+
+  432 000002A4         
+  433 000002A4                 ALIGN
+  434 000002A4                 END
+              AB98D379 
+              00057E40 
+              40011008 
+              40010808 
+              40010C08 
+              00186A00 
+              4001080C 
+              000F4240 
+              40021018 
+              40010804 
+              44433334 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\whack-a-mole.d -o.\objects\whack-a-mole.o -I.\RTE\_Targe
+t_1 -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include -IC:\Keil_v5\
+ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SE
+TA 525" --predefine="STM32F10X_MD_VL SETA 1" --list=.\listings\whack-a-mole.lst
+ Whack-a-mole.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 68 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 71 in file Whack-a-mole.s
+   Uses
+      At line 69 in file Whack-a-mole.s
+Comment: __Vectors used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+End_Failure 000000E6
+
+Symbol: End_Failure
+   Definitions
+      At line 187 in file Whack-a-mole.s
+   Uses
+      At line 174 in file Whack-a-mole.s
+Comment: End_Failure used once
+End_Success 000000FA
+
+Symbol: End_Success
+   Definitions
+      At line 195 in file Whack-a-mole.s
+   Uses
+      At line 182 in file Whack-a-mole.s
+Comment: End_Success used once
+GPIO_ClockInit 00000274
+
+Symbol: GPIO_ClockInit
+   Definitions
+      At line 396 in file Whack-a-mole.s
+   Uses
+      At line 80 in file Whack-a-mole.s
+Comment: GPIO_ClockInit used once
+GPIO_init 00000298
+
+Symbol: GPIO_init
+   Definitions
+      At line 419 in file Whack-a-mole.s
+   Uses
+      At line 81 in file Whack-a-mole.s
+Comment: GPIO_init used once
+LED1 000001FC
+
+Symbol: LED1
+   Definitions
+      At line 320 in file Whack-a-mole.s
+   Uses
+      At line 121 in file Whack-a-mole.s
+      At line 196 in file Whack-a-mole.s
+      At line 281 in file Whack-a-mole.s
+
+LED2 00000210
+
+Symbol: LED2
+   Definitions
+      At line 332 in file Whack-a-mole.s
+   Uses
+      At line 123 in file Whack-a-mole.s
+      At line 197 in file Whack-a-mole.s
+      At line 279 in file Whack-a-mole.s
+
+LED3 00000224
+
+Symbol: LED3
+   Definitions
+      At line 345 in file Whack-a-mole.s
+   Uses
+      At line 125 in file Whack-a-mole.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 189 in file Whack-a-mole.s
+      At line 277 in file Whack-a-mole.s
+
+LED4 00000238
+
+Symbol: LED4
+   Definitions
+      At line 359 in file Whack-a-mole.s
+   Uses
+      At line 127 in file Whack-a-mole.s
+      At line 190 in file Whack-a-mole.s
+      At line 275 in file Whack-a-mole.s
+
+MYCODE 00000000
+
+Symbol: MYCODE
+   Definitions
+      At line 74 in file Whack-a-mole.s
+   Uses
+      None
+Comment: MYCODE unused
+Normal_game_play 00000030
+
+Symbol: Normal_game_play
+   Definitions
+      At line 106 in file Whack-a-mole.s
+   Uses
+      At line 94 in file Whack-a-mole.s
+Comment: Normal_game_play used once
+PrelimWait_time 00000180
+
+Symbol: PrelimWait_time
+   Definitions
+      At line 258 in file Whack-a-mole.s
+   Uses
+      At line 108 in file Whack-a-mole.s
+      At line 119 in file Whack-a-mole.s
+
+ReactTime_wait 00000078
+
+Symbol: ReactTime_wait
+   Definitions
+      At line 136 in file Whack-a-mole.s
+   Uses
+      At line 129 in file Whack-a-mole.s
+      At line 173 in file Whack-a-mole.s
+
+Reset_Handler 00000000
+
+Symbol: Reset_Handler
+   Definitions
+      At line 78 in file Whack-a-mole.s
+   Uses
+      At line 72 in file Whack-a-mole.s
+      At line 75 in file Whack-a-mole.s
+
+Start_Game 00000040
+
+Symbol: Start_Game
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 115 in file Whack-a-mole.s
+   Uses
+      At line 112 in file Whack-a-mole.s
+      At line 184 in file Whack-a-mole.s
+
+Wait_for_player 0000019C
+
+Symbol: Wait_for_player
+   Definitions
+      At line 270 in file Whack-a-mole.s
+   Uses
+      At line 90 in file Whack-a-mole.s
+      At line 192 in file Whack-a-mole.s
+      At line 199 in file Whack-a-mole.s
+
+Winning_Wait 00000126
+
+Symbol: Winning_Wait
+   Definitions
+      At line 216 in file Whack-a-mole.s
+   Uses
+      At line 198 in file Whack-a-mole.s
+Comment: Winning_Wait used once
+all_dark 00000264
+
+Symbol: all_dark
+   Definitions
+      At line 384 in file Whack-a-mole.s
+   Uses
+      At line 85 in file Whack-a-mole.s
+      At line 118 in file Whack-a-mole.s
+
+check_button 00000142
+
+Symbol: check_button
+   Definitions
+      At line 228 in file Whack-a-mole.s
+   Uses
+      None
+Comment: check_button unused
+check_start 000001BE
+
+Symbol: check_start
+   Definitions
+      At line 289 in file Whack-a-mole.s
+   Uses
+      At line 92 in file Whack-a-mole.s
+Comment: check_start used once
+delay 0000024C
+
+Symbol: delay
+   Definitions
+      At line 372 in file Whack-a-mole.s
+   Uses
+      At line 87 in file Whack-a-mole.s
+      At line 96 in file Whack-a-mole.s
+
+finish_round 000000D2
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: finish_round
+   Definitions
+      At line 178 in file Whack-a-mole.s
+   Uses
+      At line 167 in file Whack-a-mole.s
+Comment: finish_round used once
+losing_Wait 0000010A
+
+Symbol: losing_Wait
+   Definitions
+      At line 203 in file Whack-a-mole.s
+   Uses
+      At line 191 in file Whack-a-mole.s
+Comment: losing_Wait used once
+mainLoop 00000008
+
+Symbol: mainLoop
+   Definitions
+      At line 83 in file Whack-a-mole.s
+   Uses
+      At line 99 in file Whack-a-mole.s
+Comment: mainLoop used once
+wait 0000025C
+
+Symbol: wait
+   Definitions
+      At line 379 in file Whack-a-mole.s
+   Uses
+      At line 375 in file Whack-a-mole.s
+      At line 381 in file Whack-a-mole.s
+
+wait1 00000190
+
+Symbol: wait1
+   Definitions
+      At line 265 in file Whack-a-mole.s
+   Uses
+      At line 261 in file Whack-a-mole.s
+      At line 267 in file Whack-a-mole.s
+
+waitl 0000011A
+
+Symbol: waitl
+   Definitions
+      At line 210 in file Whack-a-mole.s
+   Uses
+      At line 206 in file Whack-a-mole.s
+      At line 212 in file Whack-a-mole.s
+
+waitw 00000136
+
+Symbol: waitw
+   Definitions
+      At line 223 in file Whack-a-mole.s
+   Uses
+      At line 219 in file Whack-a-mole.s
+      At line 225 in file Whack-a-mole.s
+
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+27 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+DELAYONEHZ 000F4240
+
+Symbol: DELAYONEHZ
+   Definitions
+      At line 61 in file Whack-a-mole.s
+   Uses
+      At line 374 in file Whack-a-mole.s
+Comment: DELAYONEHZ used once
+DELAYTIME 00186A00
+
+Symbol: DELAYTIME
+   Definitions
+      At line 60 in file Whack-a-mole.s
+   Uses
+      None
+Comment: DELAYTIME unused
+GPIOA_BRR 40010814
+
+Symbol: GPIOA_BRR
+   Definitions
+      At line 20 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOA_BRR unused
+GPIOA_BSRR 40010810
+
+Symbol: GPIOA_BSRR
+   Definitions
+      At line 19 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOA_BSRR unused
+GPIOA_CRH 40010804
+
+Symbol: GPIOA_CRH
+   Definitions
+      At line 16 in file Whack-a-mole.s
+   Uses
+      At line 422 in file Whack-a-mole.s
+Comment: GPIOA_CRH used once
+GPIOA_CRL 40010800
+
+Symbol: GPIOA_CRL
+   Definitions
+      At line 15 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOA_CRL unused
+GPIOA_IDR 40010808
+
+Symbol: GPIOA_IDR
+   Definitions
+      At line 17 in file Whack-a-mole.s
+   Uses
+      At line 147 in file Whack-a-mole.s
+      At line 237 in file Whack-a-mole.s
+      At line 298 in file Whack-a-mole.s
+
+GPIOA_LCKR 40010818
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+
+Symbol: GPIOA_LCKR
+   Definitions
+      At line 21 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOA_LCKR unused
+GPIOA_ODR 4001080C
+
+Symbol: GPIOA_ODR
+   Definitions
+      At line 18 in file Whack-a-mole.s
+   Uses
+      At line 323 in file Whack-a-mole.s
+      At line 335 in file Whack-a-mole.s
+      At line 349 in file Whack-a-mole.s
+      At line 362 in file Whack-a-mole.s
+      At line 386 in file Whack-a-mole.s
+
+GPIOB_BRR 40010C14
+
+Symbol: GPIOB_BRR
+   Definitions
+      At line 29 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOB_BRR unused
+GPIOB_BSRR 40010C10
+
+Symbol: GPIOB_BSRR
+   Definitions
+      At line 28 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOB_BSRR unused
+GPIOB_CRH 40010C04
+
+Symbol: GPIOB_CRH
+   Definitions
+      At line 25 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOB_CRH unused
+GPIOB_CRL 40010C00
+
+Symbol: GPIOB_CRL
+   Definitions
+      At line 24 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOB_CRL unused
+GPIOB_IDR 40010C08
+
+Symbol: GPIOB_IDR
+   Definitions
+      At line 26 in file Whack-a-mole.s
+   Uses
+      At line 153 in file Whack-a-mole.s
+      At line 159 in file Whack-a-mole.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+      At line 243 in file Whack-a-mole.s
+      At line 249 in file Whack-a-mole.s
+      At line 304 in file Whack-a-mole.s
+      At line 310 in file Whack-a-mole.s
+
+GPIOB_LCKR 40010C18
+
+Symbol: GPIOB_LCKR
+   Definitions
+      At line 30 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOB_LCKR unused
+GPIOB_ODR 40010C0C
+
+Symbol: GPIOB_ODR
+   Definitions
+      At line 27 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOB_ODR unused
+GPIOC_BRR 40011014
+
+Symbol: GPIOC_BRR
+   Definitions
+      At line 39 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOC_BRR unused
+GPIOC_BSRR 40011010
+
+Symbol: GPIOC_BSRR
+   Definitions
+      At line 38 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOC_BSRR unused
+GPIOC_CRH 40011004
+
+Symbol: GPIOC_CRH
+   Definitions
+      At line 35 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOC_CRH unused
+GPIOC_CRL 40011000
+
+Symbol: GPIOC_CRL
+   Definitions
+      At line 34 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOC_CRL unused
+GPIOC_IDR 40011008
+
+Symbol: GPIOC_IDR
+   Definitions
+      At line 36 in file Whack-a-mole.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Absolute symbols
+
+      At line 141 in file Whack-a-mole.s
+      At line 231 in file Whack-a-mole.s
+      At line 292 in file Whack-a-mole.s
+
+GPIOC_LCKR 40011018
+
+Symbol: GPIOC_LCKR
+   Definitions
+      At line 40 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOC_LCKR unused
+GPIOC_ODR 4001100C
+
+Symbol: GPIOC_ODR
+   Definitions
+      At line 37 in file Whack-a-mole.s
+   Uses
+      None
+Comment: GPIOC_ODR unused
+INITIAL_MSP 20001000
+
+Symbol: INITIAL_MSP
+   Definitions
+      At line 11 in file Whack-a-mole.s
+   Uses
+      At line 71 in file Whack-a-mole.s
+Comment: INITIAL_MSP used once
+LosingSignalTime 00057E40
+
+Symbol: LosingSignalTime
+   Definitions
+      At line 66 in file Whack-a-mole.s
+   Uses
+      At line 205 in file Whack-a-mole.s
+Comment: LosingSignalTime used once
+PrelimWait 00186A00
+
+Symbol: PrelimWait
+   Definitions
+      At line 62 in file Whack-a-mole.s
+   Uses
+      At line 260 in file Whack-a-mole.s
+Comment: PrelimWait used once
+RCC_AHBENR 40021014
+
+Symbol: RCC_AHBENR
+   Definitions
+      At line 49 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_AHBENR unused
+RCC_APB1ENR 4002101C
+
+Symbol: RCC_APB1ENR
+   Definitions
+      At line 53 in file Whack-a-mole.s
+   Uses
+      None
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Absolute symbols
+
+Comment: RCC_APB1ENR unused
+RCC_APB1RSTR 40021010
+
+Symbol: RCC_APB1RSTR
+   Definitions
+      At line 48 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_APB1RSTR unused
+RCC_APB2ENR 40021018
+
+Symbol: RCC_APB2ENR
+   Definitions
+      At line 51 in file Whack-a-mole.s
+   Uses
+      At line 402 in file Whack-a-mole.s
+Comment: RCC_APB2ENR used once
+RCC_APB2RSTR 4002100C
+
+Symbol: RCC_APB2RSTR
+   Definitions
+      At line 47 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_APB2RSTR unused
+RCC_BDCR 40021020
+
+Symbol: RCC_BDCR
+   Definitions
+      At line 54 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_BDCR unused
+RCC_CFGR 40021004
+
+Symbol: RCC_CFGR
+   Definitions
+      At line 45 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_CFGR unused
+RCC_CFGR2 4002102C
+
+Symbol: RCC_CFGR2
+   Definitions
+      At line 56 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_CFGR2 unused
+RCC_CIR 40021008
+
+Symbol: RCC_CIR
+   Definitions
+      At line 46 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_CIR unused
+RCC_CR 40021000
+
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: RCC_CR
+   Definitions
+      At line 44 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_CR unused
+RCC_CSR 40021024
+
+Symbol: RCC_CSR
+   Definitions
+      At line 55 in file Whack-a-mole.s
+   Uses
+      None
+Comment: RCC_CSR unused
+Rand AB98D379
+
+Symbol: Rand
+   Definitions
+      At line 63 in file Whack-a-mole.s
+   Uses
+      At line 110 in file Whack-a-mole.s
+Comment: Rand used once
+ReactTime 00057E40
+
+Symbol: ReactTime
+   Definitions
+      At line 64 in file Whack-a-mole.s
+   Uses
+      At line 111 in file Whack-a-mole.s
+      At line 179 in file Whack-a-mole.s
+      At line 188 in file Whack-a-mole.s
+
+WinningSignalTime 00057E40
+
+Symbol: WinningSignalTime
+   Definitions
+      At line 65 in file Whack-a-mole.s
+   Uses
+      At line 218 in file Whack-a-mole.s
+Comment: WinningSignalTime used once
+40 symbols
+404 symbols in table
